@@ -12,7 +12,7 @@ class Agora {
 
     async generateToken(channelName,uId) {
         // Build token with uid
-        const tokenA = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, uId, role);
+        const tokenA = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, 0, role);
         return tokenA;
     }
 }
