@@ -29,6 +29,7 @@ class SocketEvents {
             const me = this.socket.user.id;
             data.channel = me + 'channel';
             data.token = await this.agora.generateToken(data.channel, me);
+            data.appId = process.env.APP_ID;
             const recSocket = MemCache.hget(process.env.CHAT_SOCKET, `${data.id}`);
             if (recSocket) {
                 data.id = me;
