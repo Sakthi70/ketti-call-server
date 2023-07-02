@@ -31,6 +31,12 @@ class SocketEvents {
             data.token = await this.agora.generateToken(data.channel, me);
             data.appId = process.env.APP_ID;
             const recSocket = MemCache.hget(process.env.CHAT_SOCKET, `${data.id}`);
+            const reqSocket = MemCache.hget(process.env.CHAT_SOCKET, `${me}`);
+            if(reqSocket) {
+                let otherId = data.id;
+                data.id = me;
+                this.nsp.to(reqSocket).emit("onCallTransfer", {...data,message:"INCOMING CALL",otherId});
+            }
             if (recSocket) {
                 data.id = me;
 
@@ -38,7 +44,6 @@ class SocketEvents {
             }
         })
     }
-
 
     /**
      * @param id // other user id
@@ -66,6 +71,12 @@ class SocketEvents {
         this.socket.on("rejectCall", async (data) => {
             const me = this.socket.user.id;
             const recSocket = MemCache.hget(process.env.CHAT_SOCKET, `${data.id}`);
+            const reqSocket = MemCache.hget(process.env.CHAT_SOCKET, `${me}`);
+            if(reqSocket) {
+                let otherId = data.id;
+                data.id = me;
+                this.nsp.to(reqSocket).emit("onCallTransfer", {...data,  name: data.name,message:"MISSED CALL",otherId});
+            }
             if (recSocket) {
                 const res = { id: me , name: data.name};
                 this.nsp.to(recSocket).emit("onRejectCall", res);
